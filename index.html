@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFlow - Task Manager Mahasiswa</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🎓';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.1;
+            right: -50px;
+            top: -50px;
+            transform: rotate(-15deg);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1::before {
+            content: '📚 ';
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        #welcomeText {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
+        #loginPage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-box::before {
+            content: '🎓';
+            font-size: 80px;
+            display: block;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .login-box h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .login-box p.subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 16px 20px;
+            margin: 10px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-msg {
+            color: #dc3545;
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 10px;
+        }
+
+        #mainApp {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #6c757d;
+            border: none;
+            background: transparent;
+            position: relative;
+            min-width: 120px;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab.active::before {
+            transform: scaleX(1);
+        }
+
+        .content {
+            padding: 35px;
+            min-height: 500px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        input,
+        textarea,
+        select {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 14px;
+            min-width: 180px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .item {
+            background: white;
+            padding: 20px 25px;
+            margin-bottom: 18px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .item.completed {
+            opacity: 0.5;
+            text-decoration: line-through;
+            background: #f8f9fa;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .item-meta {
+            font-size: 13px;
+            color: #6c757d;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .item-meta::before {
+            content: '📅';
+            font-size: 14px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 9px 16px;
+            font-size: 13px;
+            background: #6c757d;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-complete {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        }
+
+        .btn-complete:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .priority-medium {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffaa00 100%);
+            color: #333;
+        }
+
+        .priority-low {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            color: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .calendar-header h2 {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: white;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .day-cell:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-cell.today {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .event-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .curhat-item {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            border-left: 6px solid #ff6b6b;
+            box-shadow: 0 5px 20px rgba(252, 182, 159, 0.3);
+            transition: all 0.3s;
+        }
+
+        .curhat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(252, 182, 159, 0.4);
+        }
+
+        .curhat-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .curhat-date::before {
+            content: '💭 ';
+        }
+
+        .curhat-text {
+            color: #333;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            color: #999;
+        }
+
+        .demo-accounts {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .demo-accounts p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .demo-accounts b {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            input,
+            select,
+            button {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .calendar-grid {
+                gap: 8px;
+            }
+
+            .day-cell {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage">
+        <div class="login-box">
+            <h2>CampusFlow</h2>
+            <p class="subtitle">Kelola Tugas Kuliahmu dengan Lebih Efektif</p>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">🚀 Masuk Sekarang</button>
+            <p class="error-msg" id="errorMsg"></p>
+            <div class="demo-accounts">
+                <p>📝 Akun Demo:</p>
+                <b>demo</b> → 123<br>
+                <b>mahasiswa</b> → kampus123<br>
+                <b>admin</b> → admin123
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" class="container">
+        <div class="header">
+            <h1>CampusFlow</h1>
+            <p>Solusi Produktivitas untuk Mahasiswa Modern</p>
+            <p id="welcomeText">Selamat datang!</p>
+            <button class="logout-btn" onclick="logout()">👋 Logout</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('todo')">✅ To-Do List</button>
+            <button class="tab" onclick="switchTab('calendar')">📅 Kalender</button>
+            <button class="tab" onclick="switchTab('wishlist')">⭐ Wishlist</button>
+            <button class="tab" onclick="switchTab('curhat')">💭 Curhat</button>
+        </div>
+
+        <div class="content">
+            <!-- TO-DO -->
+            <div id="todo" class="tab-content active">
+                <div class="input-group">
+                    <input type="text" id="todoInput" placeholder="✏️ Tugas baru yang perlu dikerjakan...">
+                    <input type="date" id="todoDate">
+                    <select id="todoPriority">
+                        <option value="low">🟢 Rendah</option>
+                        <option value="medium">🟡 Sedang</option>
+                        <option value="high">🔴 Penting</option>
+                    </select>
+                    <button onclick="addTodo()">➕ Tambah Tugas</button>
+                </div>
+                <div id="todoList"></div>
+            </div>
+
+            <!-- KALENDER -->
+            <div id="calendar" class="tab-content">
+                <div class="calendar-header">
+                    <h2 id="currentMonth">📅</h2>
+                    <div>
+                        <button onclick="prevMonth()">◀ Prev</button>
+                        <button onclick="today()">🏠 Hari Ini</button>
+                        <button onclick="nextMonth()">Next ▶</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="eventTitle" placeholder="📌 Nama acara atau jadwal...">
+                    <input type="date" id="eventDate">
+                    <input type="time" id="eventTime">
+                    <button onclick="addEvent()">➕ Tambah Acara</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div style="margin-top:40px;">
+                    <h3 style="color:#667eea; margin-bottom:20px;">🎯 Acara Mendatang</h3>
+                    <div id="eventList"></div>
+                </div>
+            </div>
+
+            <!-- WISHLIST -->
+            <div id="wishlist" class="tab-content">
+                <div class="input-group">
+                    <input type="text" id="wishInput" placeholder="🎯 Target atau impian semester ini...">
+                    <button onclick="addWish()">⭐ Tambah Target</button>
+                </div>
+                <div id="wishList"></div>
+            </div>
+
+            <!-- CURHAT -->
+            <div id="curhat" class="tab-content">
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <textarea id="curhatInput"
+                        placeholder="💭 Ceritakan isi hatimu di sini... Semua aman dan tersimpan dengan baik ❤️"
+                        style="min-height:150px; resize:vertical;"></textarea>
+                    <button onclick="addCurhat()" style="align-self:flex-end;">💾 Simpan Curhat</button>
+                </div>
+                <div id="curhatList" style="margin-top:30px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyD3I6nISyQdqaWZNvTN2WISPel89Jm8rRY8DDun-FCTFZiftktDFhs_xX9557BneARhQ/exec";
+        let currentUser = null;
+        let todos = [], events = [], wishes = [], curhats = [];
+        let currentDate = new Date();
+
+        async function api(action, payload = {}) {
+            const res = await fetch(BACKEND_URL, {
+                method: "POST",
+                body: JSON.stringify({ action, username: currentUser, ...payload })
+            });
+            return await res.json();
+        }
+
+        function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            if (!username || !password) {
+                document.getElementById("errorMsg").textContent = "⚠️ Isi username & password!";
+                return;
+            }
+            api("login", { username: username, password: password }).then(res => {
+                if (res.success) {
+                    currentUser = username;
+                    localStorage.setItem("lastUser", username);
+                    document.getElementById("loginPage").style.display = "none";
+                    document.getElementById("mainApp").style.display = "block";
+                    document.getElementById("welcomeText").textContent = `👋 Halo, ${username}!`;
+                    loadAll();
+                } else {
+                    document.getElementById("errorMsg").textContent = "❌ Username atau password salah!";
+                }
+            }).catch(err => {
+                document.getElementById("errorMsg").textContent = "🌐 Koneksi gagal. Cek internet.";
+            });
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById("loginPage").style.display = "flex";
+            document.getElementById("mainApp").style.display = "none";
+            document.getElementById("username").value = localStorage.getItem("lastUser") || "";
+            document.getElementById("password").value = "";
+            document.getElementById("errorMsg").textContent = "";
+        }
+
+        function loadAll() {
+            api("load").then(data => {
+                todos = data.todos || [];
+                events = data.events || [];
+                wishes = data.wishes || [];
+                curhats = data.curhats || [];
+                renderTodos();
+                renderCalendar();
+                renderEvents();
+                renderWishes();
+                renderCurhats();
+            }).catch(() => {
+                alert("⚠️ Gagal memuat data. Coba refresh halaman.");
+            });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+            event.target.classList.add("active");
+            document.getElementById(tab).classList.add("active");
+            if (tab === "calendar") renderCalendar();
+        }
+
+        /* ==================== TO-DO ==================== */
+        async function addTodo() {
+            const text = document.getElementById("todoInput").value.trim();
+            const date = document.getElementById("todoDate").value;
+            const priority = document.getElementById("todoPriority").value;
+            if (text) {
+                await api("save", { type: "todo", text, date, priority, completed: false });
+                document.getElementById("todoInput").value = "";
+                document.getElementById("todoDate").value = "";
+                loadAll();
+            }
+        }
+
+        async function toggleTodo(id) {
+            const t = todos.find(x => x.id == id);
+            if (t) {
+                await api("save", { type: "todo", id, text: t.text, date: t.date, priority: t.priority, completed: !t.completed });
+                loadAll();
+            }
+        }
+
+        async function deleteTodo(id) {
+            await api("delete", { type: "todo", id });
+            loadAll();
+        }
+
+        function renderTodos() {
+            const el = document.getElementById("todoList");
+            if (todos.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><p>Belum ada tugas. Yuk mulai produktif!</p></div>`;
+                return;
+            }
+            el.innerHTML = todos.map(t => `
+                <div class="item ${t.completed ? 'completed' : ''}">
+                    <div class="item-content">
+                        <div class="item-title">${t.text}
+                            <span class="priority-badge priority-${t.priority}">
+                                ${t.priority === 'high' ? '🔴 Penting' : t.priority === 'medium' ? '🟡 Sedang' : '🟢 Rendah'}
+                            </span>
+                        </div>
+                        <div class="item-meta">${t.date ? new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tanpa deadline'}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-small btn-complete" onclick="toggleTodo(${t.id})">${t.completed ? '↩️ Batal' : '✅ Selesai'}</button>
+                        <button class="btn-small btn-delete" onclick="deleteTodo(${t.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==================== KALENDER ==================== */
+        function renderCalendar() {
+            const grid = document.getElementById("calendarGrid");
+            const monthEl = document.getElementById("currentMonth");
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            monthEl.textContent = '📅 ' + currentDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay(); // 0 = Minggu
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            let html = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map(d => `<div class="day-header">${d}</div>`).join('');
+
+            // empty cells sebelum tanggal 1
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="day-cell"></div>';
+            }
+
+            // isi tanggal
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const isToday = dateStr === todayStr;
+                const dayEvents = events.filter(e => e.date === dateStr);
+
+                html += `
+                    <div class="day-cell ${isToday ? 'today' : ''}" onclick="showDayEvents('${dateStr}')">
+                        <div>${d}</div>
+                        ${dayEvents.length > 0 ? '<div class="event-dot"></div>' : ''}
+                    </div>`;
+            }
+
+            grid.innerHTML = html;
+            renderEvents(); // update daftar acara mendatang juga
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function today() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        function showDayEvents(date) {
+            const dayEvents = events.filter(e => e.date === date);
+            let msg = `📅 ${new Date(date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}\n\n`;
+            if (dayEvents.length === 0) {
+                msg += "Tidak ada acara.";
+            } else {
+                dayEvents.forEach(e => {
+                    msg += `• ${e.time ? e.time : ''} ${e.title}\n`;
+                });
+            }
+            alert(msg);
+        }
+
+        async function addEvent() {
+            const title = document.getElementById("eventTitle").value.trim();
+            const date = document.getElementById("eventDate").value;
+            const time = document.getElementById("eventTime").value;
+            if (title && date) {
+                await api("save", { type: "event", title, date, time });
+                document.getElementById("eventTitle").value = "";
+                document.getElementById("eventDate").value = "";
+                document.getElementById("eventTime").value = "";
+                loadAll();
+            }
+        }
+
+        async function deleteEvent(id) {
+            await api("delete", { type: "event", id });
+            loadAll();
+        }
+
+        function renderEvents() {
+            const el = document.getElementById("eventList");
+            const upcoming = events
+                .filter(e => new Date(e.date) >= new Date().setHours(0, 0, 0, 0))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (upcoming.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><p>Belum ada acara mendatang.</p></div>`;
+                return;
+            }
+
+            el.innerHTML = upcoming.map(e => `
+                <div class="item">
+                    <div class="item-content">
+                        <div class="item-title">${e.title}</div>
+                        <div class="item-meta">
+                            ${new Date(e.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            ${e.time ? ' | ' + e.time : ''}
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-small btn-delete" onclick="deleteEvent(${e.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==================== WISHLIST ==================== */
+        async function addWish() {
+            const text = document.getElementById("wishInput").value.trim();
+            if (text) {
+                await api("save", { type: "wish", text });
+                document.getElementById("wishInput").value = "";
+                loadAll();
+            }
+        }
+
+        async function deleteWish(id) {
+            await api("delete", { type: "wish", id });
+            loadAll();
+        }
+
+        function renderWishes() {
+            const el = document.getElementById("wishList");
+            if (wishes.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⭐</div><p>Belum ada target. Tulis impianmu!</p></div>`;
+                return;
+            }
+            el.innerHTML = wishes.map(w => `
+                <div class="item">
+                    <div class="item-content">
+                        <div class="item-title">⭐ ${w.text}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-small btn-delete" onclick="deleteWish(${w.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==================== CURHAT ==================== */
+        async function addCurhat() {
+            const text = document.getElementById("curhatInput").value.trim();
+            if (text) {
+                await api("save", { type: "curhat", text });
+                document.getElementById("curhatInput").value = "";
+                loadAll();
+            }
+        }
+
+        async function deleteCurhat(id) {
+            await api("delete", { type: "curhat", id });
+            loadAll();
+        }
+
+        function renderCurhats() {
+            const el = document.getElementById("curhatList");
+            if (curhats.length === 0) {
+                el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💭</div><p>Belum ada curhatan. Ceritakan apa yang kamu rasakan ❤️</p></div>`;
+                return;
+            }
+            el.innerHTML = curhats.slice().reverse().map(c => `
+                <div class="curhat-item">
+                    <div class="curhat-date">
+                        ${new Date(c.timestamp).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div class="curhat-text">${c.text.replace(/\n/g, '<br>')}</div>
+                    <div style="margin-top:12px;">
+                        <button class="btn-small btn-delete" onclick="deleteCurhat(${c.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==================== AUTO LOGIN JIKA SUDAH PERNAH MASUK ==================== */
+        window.onload = function () {
+            const lastUser = localStorage.getItem("lastUser");
+            if (lastUser) {
+                document.getElementById("username").value = lastUser;
+            }
+        };
+    </script>
